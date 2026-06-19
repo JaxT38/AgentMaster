@@ -1,0 +1,32 @@
+# Secrets
+.env
+*.key
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# JavaScript
+node_modules/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+
+# Logs and local data
+*.log
+data/
+tmp/
+
+# Docker overrides
+docker-compose.override.yml
