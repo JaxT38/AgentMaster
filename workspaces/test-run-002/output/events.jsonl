@@ -1,0 +1,9 @@
+{"run_id": "testrun002bbb", "event_type": "started", "timestamp": "2026-06-27T15:14:42Z"}
+{"run_id": "testrun002bbb", "event_type": "step", "timestamp": "2026-06-27T15:14:43Z", "message": "Navigating to page 1", "data": {"step_name": "navigation", "progress": 0.2}}
+{"run_id": "testrun002bbb", "event_type": "failed", "timestamp": "2026-06-27T15:14:43Z", "message": "Run failed: Page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://www.wikipedia.org/\nCall log:\n  - navigating to \"https://www.wikipedia.org/\", waiting until \"load\"\n", "data": {"fatal": true, "error_code": "Error"}}
+{"run_id": "testrun002bbb", "event_type": "started", "timestamp": "2026-06-27T15:19:05Z"}
+{"run_id": "testrun002bbb", "event_type": "step", "timestamp": "2026-06-27T15:19:06Z", "message": "Navigating to page 1", "data": {"step_name": "navigation", "progress": 0.2}}
+{"run_id": "testrun002bbb", "event_type": "failed", "timestamp": "2026-06-27T15:19:06Z", "message": "Run failed: Page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://www.wikipedia.org/\nCall log:\n  - navigating to \"https://www.wikipedia.org/\", waiting until \"load\"\n", "data": {"fatal": true, "error_code": "Error"}}
+{"run_id": "testrun002bbb", "event_type": "started", "timestamp": "2026-06-27T15:24:27Z"}
+{"run_id": "testrun002bbb", "event_type": "step", "timestamp": "2026-06-27T15:24:27Z", "message": "Navigating to page 1", "data": {"step_name": "navigation", "progress": 0.2}}
+{"run_id": "testrun002bbb", "event_type": "failed", "timestamp": "2026-06-27T15:24:27Z", "message": "Run failed: Page.goto: net::ERR_TUNNEL_CONNECTION_FAILED at https://www.wikipedia.org/\nCall log:\n  - navigating to \"https://www.wikipedia.org/\", waiting until \"load\"\n", "data": {"fatal": true, "error_code": "ERR_TUNNEL_CONNECTION_FAILED"}}

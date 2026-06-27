@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://local-agent-platform/schemas/agent.schema.json",
+  "title": "Agent Manifest",
+  "description": "Schema for an agent.yaml manifest. Defines what an agent is, what it runs in, and what it is permitted to do.",
+  "type": "object",
+  "required": ["metadata", "runtime", "platforms", "model", "capabilities", "permissions"],
+  "additionalProperties": false,
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["id", "name", "version", "category"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique, stable identifier for this agent. Lowercase, hyphenated.",
+          "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable display name."
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version of this agent definition.",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "category": {
+          "type": "string",
+          "description": "Grouping used for default isolation policy and dashboard organization.",
+          "enum": [
+            "accessibility-audit",
+            "privacy-audit",
+            "frontend-dev",
+            "git-management",
+            "content",
+            "browser-extension",
+            "other"
+          ]
+        },
+        "description": {
+          "type": "string",
+          "description": "Short summary of what this agent does."
+        }
+      }
+    },
+    "runtime": {
+      "type": "object",
+      "required": ["image", "command", "execution_mode"],
+      "additionalProperties": false,
+      "properties": {
+        "image": {
+          "type": "string",
+          "description": "Fully qualified container image reference, including tag/digest. No floating 'latest' tags."
+        },
+        "command": {
+          "type": "array",
+          "description": "Entrypoint/command run inside the container.",
+          "items": { "type": "string" },
+          "minItems": 1
+        },
+        "execution_mode": {
+          "type": "string",
+          "description": "Isolation tier this agent requires.",
+          "enum": ["rootless-container", "gvisor", "microvm"]
+        },
+        "timeout_seconds": {
+          "type": "integer",
+          "description": "Hard wall-clock limit for a single run before the launcher kills the container.",
+          "minimum": 1,
+          "default": 600
+        },
+        "resource_limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cpu_limit": {
+              "type": "string",
+              "description": "Docker-style CPU limit, e.g. '1.0' or '0.5'."
+            },
+            "memory_limit": {
+              "type": "string",
+              "description": "Docker-style memory limit, e.g. '512m' or '1g'."
+            },
+            "pids_limit": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        }
+      }
+    },
+    "platforms": {
+      "type": "array",
+      "description": "Host platforms this agent is expected to run on.",
+      "items": {
+        "type": "string",
+        "enum": ["linux/amd64", "linux/arm64", "darwin/arm64"]
+      },
+      "minItems": 1
+    },
+    "model": {
+      "type": "object",
+      "required": ["required", "capability"],
+      "additionalProperties": false,
+      "properties": {
+        "required": {
+          "type": "boolean",
+          "description": "Whether this agent needs model access at all. False for purely deterministic agents."
+        },
+        "capability": {
+          "type": "string",
+          "description": "Minimum capability tier needed from the model gateway.",
+          "enum": ["none", "lightweight", "standard", "advanced"]
+        },
+        "minimum_context": {
+          "type": "integer",
+          "description": "Minimum context window in tokens, if model access is required.",
+          "minimum": 0
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2,
+          "default": 0
+        }
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "description": "Declared things this agent does. Used for dashboard display and future routing logic, not enforcement.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "browser-automation",
+          "screenshot-capture",
+          "schema-validated-output",
+          "structured-reporting",
+          "read-only-network-access",
+          "file-write",
+          "git-operations",
+          "code-generation"
+        ]
+      },
+      "minItems": 1
+    },
+    "permissions": {
+      "type": "object",
+      "required": ["network", "workspace"],
+      "additionalProperties": false,
+      "properties": {
+        "network": {
+          "type": "object",
+          "required": ["mode"],
+          "additionalProperties": false,
+          "properties": {
+            "mode": {
+              "type": "string",
+              "description": "'none' = no egress at all. 'proxy-allowlist' = all egress forced through the launcher-managed proxy with a per-run ACL.",
+              "enum": ["none", "proxy-allowlist"]
+            },
+            "allowed_targets": {
+              "type": "array",
+              "description": "Exact-match or wildcard domains this agent may reach, merged with the shared common-web-assets list by the launcher. Required if mode is 'proxy-allowlist'.",
+              "items": { "type": "string" }
+            },
+            "allow_dynamic_target": {
+              "type": "boolean",
+              "description": "If true, the launcher will add the run's ${TARGET_DOMAIN} (from the task envelope) to the per-run ACL automatically, in addition to allowed_targets.",
+              "default": false
+            },
+            "method_restriction": {
+              "type": "string",
+              "description": "HTTP methods permitted through the proxy, regardless of domain.",
+              "enum": ["read-only", "unrestricted"],
+              "default": "read-only"
+            },
+            "dns_scope": {
+              "type": "string",
+              "description": "Whether DNS resolution is restricted to the same allowed set as HTTP egress.",
+              "enum": ["matches-allowlist", "open"],
+              "default": "matches-allowlist"
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": { "mode": { "const": "proxy-allowlist" } }
+              },
+              "then": {
+                "anyOf": [
+                  { "required": ["allowed_targets"] },
+                  { "required": ["allow_dynamic_target"] }
+                ]
+              }
+            }
+          ]
+        },
+        "workspace": {
+          "type": "object",
+          "required": ["input_access", "output_access"],
+          "additionalProperties": false,
+          "properties": {
+            "input_access": {
+              "type": "string",
+              "enum": ["read-only", "none"]
+            },
+            "output_access": {
+              "type": "string",
+              "enum": ["read-write", "none"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

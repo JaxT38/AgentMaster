@@ -1,0 +1,28 @@
+{
+  "run_id": "runpv7to6kx6kk1",
+  "agent_id": "wcag22-auditor",
+  "wcag_level": "AA",
+  "scanned_at": "2026-06-27T17:05:41Z",
+  "target": {
+    "entry_url": "https://www.example.com/",
+    "scope": "single-page"
+  },
+  "pages": [
+    {
+      "url": "https://www.example.com/",
+      "screenshot_path": "screenshots/page-001.png",
+      "raw_axe_result_path": "raw/page-001-axe.json",
+      "findings": []
+    }
+  ],
+  "summary": {
+    "pages_scanned": 1,
+    "total_findings": 0,
+    "by_impact": {
+      "critical": 0,
+      "serious": 0,
+      "moderate": 0,
+      "minor": 0
+    }
+  }
+}

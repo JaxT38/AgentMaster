@@ -1,0 +1,50 @@
+# Example agent manifest, conforming to schemas/agent.schema.json
+# This is the actual agent.yaml for agents/wcag22-auditor/
+
+metadata:
+  id: wcag22-auditor
+  name: "WCAG 2.2 Accessibility Auditor"
+  version: "1.0.0"
+  category: accessibility-audit
+  description: >
+    Loads a target page in a headless browser, runs an axe-core accessibility
+    scan against WCAG 2.2 criteria, captures a full-page screenshot, and
+    produces a schema-valid findings report. Read-only — never submits forms
+    or writes to the target site.
+
+runtime:
+  image: "agent-platform/browser-audit-runtime:1.0.0"
+  command: ["python", "-m", "agent_runtime"]
+  execution_mode: rootless-container
+  timeout_seconds: 300
+  resource_limits:
+    cpu_limit: "1.0"
+    memory_limit: "1g"
+    pids_limit: 256
+
+platforms:
+  - linux/amd64
+  - linux/arm64
+  - darwin/arm64
+
+model:
+  required: false
+  capability: none
+
+capabilities:
+  - browser-automation
+  - screenshot-capture
+  - schema-validated-output
+  - structured-reporting
+  - read-only-network-access
+
+permissions:
+  network:
+    mode: proxy-allowlist
+    allow_dynamic_target: true   # launcher adds ${TARGET_DOMAIN} from the task envelope
+    allowed_targets: []          # static extras beyond target + common-web-assets, if ever needed
+    method_restriction: read-only   # GET/HEAD only; POST/PUT/DELETE/PATCH denied regardless of domain
+    dns_scope: matches-allowlist
+  workspace:
+    input_access: read-only
+    output_access: read-write

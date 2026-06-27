@@ -1,0 +1,8 @@
+{"run_id": "runsd2l4yjugmgu", "event_type": "started", "timestamp": "2026-06-27T16:44:20Z"}
+{"run_id": "runsd2l4yjugmgu", "event_type": "step", "timestamp": "2026-06-27T16:44:20Z", "message": "Navigating to page 1", "data": {"step_name": "navigation", "progress": 0.2}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "step", "timestamp": "2026-06-27T16:44:20Z", "message": "Running axe-core scan on page 1", "data": {"step_name": "axe-scan", "progress": 0.4}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "artifact-written", "timestamp": "2026-06-27T16:44:20Z", "data": {"relative_path": "screenshots/page-001.png", "artifact_type": "screenshot"}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "artifact-written", "timestamp": "2026-06-27T16:44:20Z", "data": {"relative_path": "raw/page-001-axe.json", "artifact_type": "log"}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "step", "timestamp": "2026-06-27T16:44:20Z", "message": "Note: 2 violation(s) on page 1 had no mappable WCAG criteria and were excluded", "data": {"step_name": "normalize-warning", "progress": 0.5}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "artifact-written", "timestamp": "2026-06-27T16:44:21Z", "data": {"relative_path": "report.json", "artifact_type": "report"}}
+{"run_id": "runsd2l4yjugmgu", "event_type": "completed", "timestamp": "2026-06-27T16:44:21Z", "data": {"output_path": "report.json"}}

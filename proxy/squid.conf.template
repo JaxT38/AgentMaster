@@ -1,0 +1,47 @@
+# squid.conf.template
+#
+# This file is NOT used directly. The launcher copies it to
+# proxy/runtime/squid.conf before each run and appends the resolved
+# per-run allowlist (target domain + common-web-assets.txt contents)
+# into allowed-domains.acl, which this config references.
+#
+# Placeholders the launcher must fill before starting the proxy container:
+#   (none in this file itself — the domain list lives in the separate
+#   allowed-domains.acl file so it can be regenerated without touching
+#   this config)
+
+http_port 3128
+
+# ---- Method restriction: GET/HEAD only, regardless of destination ----
+acl safe_methods method GET HEAD
+http_access deny !safe_methods
+
+# ---- Domain allowlist ----
+# allowed-domains.acl is regenerated per-run by the launcher:
+#   - one exact-match line for the run's target host (or a dstdomain
+#     wildcard line, e.g. ".example.com", when target.scope == "site")
+#   - the full contents of common-web-assets.txt appended below it
+acl allowed_dst dstdomain "/etc/squid/allowed-domains.acl"
+http_access allow safe_methods allowed_dst
+
+# ---- Deny everything else, and log it ----
+http_access deny all
+
+# ---- Logging ----
+# Access log captures every request, allowed or denied — this is what
+# Phase 2's deny-log review process reads from.
+access_log /var/log/squid/access.log
+
+# cache_log / store: not needed, this proxy is a control point, not a cache.
+cache deny all
+
+# ---- DNS scope ----
+# Squid will only ever attempt to resolve hosts that pass the dstdomain
+# ACL above, so DNS resolution is implicitly scoped to the same allowlist
+# (dns_scope: matches-allowlist from agent.schema.json is satisfied by
+# this config as written — no separate DNS server/sidecar needed for v1).
+
+# ---- Misc hardening ----
+visible_hostname agent-platform-proxy
+forwarded_for delete
+via off

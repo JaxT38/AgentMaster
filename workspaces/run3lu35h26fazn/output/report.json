@@ -1,0 +1,28 @@
+{
+  "run_id": "run3lu35h26fazn",
+  "agent_id": "wcag22-auditor",
+  "wcag_level": "AA",
+  "scanned_at": "2026-06-27T16:50:49Z",
+  "target": {
+    "entry_url": "https://www.wikipedia.org/",
+    "scope": "single-page"
+  },
+  "pages": [
+    {
+      "url": "https://www.wikipedia.org/",
+      "screenshot_path": "screenshots/page-001.png",
+      "raw_axe_result_path": "raw/page-001-axe.json",
+      "findings": []
+    }
+  ],
+  "summary": {
+    "pages_scanned": 1,
+    "total_findings": 0,
+    "by_impact": {
+      "critical": 0,
+      "serious": 0,
+      "moderate": 0,
+      "minor": 0
+    }
+  }
+}

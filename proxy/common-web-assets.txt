@@ -1,0 +1,29 @@
+# Curated allowlist of common CDN / font / analytics domains.
+# Wildcarded suffixes — one per line, no scheme, no leading "www.".
+# This list is merged with each run's target domain to build the proxy ACL.
+# Grow this list deliberately based on reviewed entries from proxy/deny.log —
+# do not add an entry just because something failed once; confirm it's a
+# legitimate, expected asset host first.
+
+# Common CDNs
+.cloudflare.com
+.cloudflareinsights.com
+.jsdelivr.net
+.unpkg.com
+.akamaihd.net
+.akamaized.net
+.fastly.net
+.cdn77.com
+
+# Google-hosted assets / fonts
+.googleapis.com
+.gstatic.com
+
+# Common font hosts
+use.typekit.net
+fonts.adobe.com
+
+# Common analytics / tag managers (read-only GET beacons only — method
+# restriction still blocks any POST regardless of domain)
+.google-analytics.com
+.googletagmanager.com

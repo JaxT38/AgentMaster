@@ -1,0 +1,12 @@
+{
+  "run_id": "testrun002bbb",
+  "agent_id": "wcag22-auditor",
+  "target": {
+    "entry_url": "https://www.wikipedia.org/",
+    "scope": "single-page"
+  },
+  "created_at": "2026-06-25T23:30:00Z",
+  "parameters": {
+    "wcag_level": "AA"
+  }
+}

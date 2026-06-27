@@ -1,0 +1,57 @@
+{
+  "run_id": "run20260620a1b2c3",
+  "agent_id": "wcag22-auditor",
+  "wcag_level": "AA",
+  "scanned_at": "2026-06-20T14:32:09Z",
+  "target": {
+    "entry_url": "https://www.example.com/",
+    "scope": "single-page"
+  },
+  "pages": [
+    {
+      "url": "https://www.example.com/",
+      "screenshot_path": "screenshots/page-001.png",
+      "raw_axe_result_path": "raw/page-001-axe.json",
+      "findings": [
+        {
+          "rule_id": "color-contrast",
+          "impact": "serious",
+          "wcag_criteria": ["1.4.3"],
+          "description": "Elements must meet minimum color contrast ratio thresholds",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.9/color-contrast",
+          "node_count": 3,
+          "nodes": [
+            {
+              "selector": "footer > p.copyright",
+              "html_snippet": "<p class=\"copyright\">\u00a9 2026 Example Co.</p>"
+            }
+          ]
+        },
+        {
+          "rule_id": "image-alt",
+          "impact": "critical",
+          "wcag_criteria": ["1.1.1"],
+          "description": "Images must have alternate text",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.9/image-alt",
+          "node_count": 1,
+          "nodes": [
+            {
+              "selector": "header > img.logo",
+              "html_snippet": "<img class=\"logo\" src=\"/logo.png\">"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "pages_scanned": 1,
+    "total_findings": 2,
+    "by_impact": {
+      "critical": 1,
+      "serious": 1,
+      "moderate": 0,
+      "minor": 0
+    }
+  }
+}

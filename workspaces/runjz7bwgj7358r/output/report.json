@@ -1,0 +1,61 @@
+{
+  "run_id": "runjz7bwgj7358r",
+  "agent_id": "wcag22-auditor",
+  "wcag_level": "AA",
+  "scanned_at": "2026-06-27T18:15:34Z",
+  "target": {
+    "entry_url": "https://www.tylerimmigration.com",
+    "scope": "single-page"
+  },
+  "pages": [
+    {
+      "url": "https://www.tylerimmigration.com",
+      "screenshot_path": "screenshots/page-001.png",
+      "raw_axe_result_path": "raw/page-001-axe.json",
+      "findings": [
+        {
+          "rule_id": "color-contrast",
+          "impact": "serious",
+          "wcag_criteria": [
+            "1.4.3"
+          ],
+          "description": "Ensures the contrast between foreground and background colors meets WCAG 2 AA contrast ratio thresholds",
+          "help_url": "https://dequeuniversity.com/rules/axe/4.4/color-contrast?application=axeAPI",
+          "node_count": 6,
+          "nodes": [
+            {
+              "selector": "#services > .container > .section-header.section-header--center > .eyebrow",
+              "html_snippet": "<span class=\"eyebrow\">Practice Areas</span>"
+            },
+            {
+              "selector": "#why-choose-us > .container > .section-header.section-header--center > .eyebrow",
+              "html_snippet": "<span class=\"eyebrow\">Why Choose Us</span>"
+            },
+            {
+              "selector": "div:nth-child(4) > .lang-toggle[aria-label=\"Cambiar a Espa\u00f1ol\"][data-current-lang=\"en\"]",
+              "html_snippet": "<button class=\"lang-toggle\" aria-label=\"Cambiar a Espa\u00f1ol\" data-current-lang=\"en\">ES</button>"
+            },
+            {
+              "selector": ".footer-disclaimer",
+              "html_snippet": "<p class=\"footer-disclaimer\">Attorney Advertising. This website is for informational purposes only. Contacting the Law Office of Cynthia Tyler through this site does not create an attorney-client rela..."
+            },
+            {
+              "selector": ".footer-copyright > span:nth-child(1)",
+              "html_snippet": "<span>\u00a9 2026 Law Office of Cynthia Tyler. All rights reserved.</span>"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "pages_scanned": 1,
+    "total_findings": 1,
+    "by_impact": {
+      "critical": 0,
+      "serious": 1,
+      "moderate": 0,
+      "minor": 0
+    }
+  }
+}

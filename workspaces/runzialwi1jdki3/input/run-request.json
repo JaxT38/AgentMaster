@@ -1,0 +1,12 @@
+{
+  "run_id": "runzialwi1jdki3",
+  "agent_id": "wcag22-auditor",
+  "target": {
+    "entry_url": "https://www.tylerimmigration.com",
+    "scope": "single-page"
+  },
+  "created_at": "2026-06-27T18:13:04Z",
+  "parameters": {
+    "wcag_level": "AA"
+  }
+}

@@ -1,0 +1,152 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://local-agent-platform/schemas/wcag-output.schema.json",
+  "title": "WCAG Auditor Output Report",
+  "description": "Final result written by the wcag22-auditor agent to /workspace/output/report.json. This is the file referenced by the 'completed' event's data.output_path, and what the evaluator (Phase 7) validates.",
+  "type": "object",
+  "required": ["run_id", "agent_id", "wcag_level", "scanned_at", "target", "pages", "summary"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]{8,}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "const": "wcag22-auditor"
+    },
+    "wcag_level": {
+      "type": "string",
+      "description": "Conformance level the scan was run against.",
+      "enum": ["A", "AA", "AAA"]
+    },
+    "scanned_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the scan completed."
+    },
+    "target": {
+      "type": "object",
+      "description": "Echoes the entry_url/scope from the task envelope for traceability.",
+      "required": ["entry_url", "scope"],
+      "additionalProperties": false,
+      "properties": {
+        "entry_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["single-page", "site"]
+        }
+      }
+    },
+    "pages": {
+      "type": "array",
+      "description": "One entry per page actually visited during the run.",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["url", "screenshot_path", "findings"],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          },
+          "screenshot_path": {
+            "type": "string",
+            "description": "Path relative to /workspace/output to the full-page screenshot for this page."
+          },
+          "raw_axe_result_path": {
+            "type": "string",
+            "description": "Path relative to /workspace/output to the unmodified raw axe-core JSON for this page, kept for debugging/audit but not duplicated into 'findings'."
+          },
+          "findings": {
+            "type": "array",
+            "description": "Normalized, human-reviewable findings derived from the raw axe-core result.",
+            "items": {
+              "type": "object",
+              "required": ["rule_id", "impact", "wcag_criteria", "description", "help_url", "node_count", "nodes"],
+              "additionalProperties": false,
+              "properties": {
+                "rule_id": {
+                  "type": "string",
+                  "description": "axe-core rule identifier, e.g. 'color-contrast'."
+                },
+                "impact": {
+                  "type": "string",
+                  "enum": ["critical", "serious", "moderate", "minor"]
+                },
+                "wcag_criteria": {
+                  "type": "array",
+                  "description": "WCAG success criteria this finding maps to, e.g. '1.4.3'.",
+                  "items": { "type": "string" },
+                  "minItems": 1
+                },
+                "description": {
+                  "type": "string"
+                },
+                "help_url": {
+                  "type": "string",
+                  "format": "uri"
+                },
+                "node_count": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "description": "Number of DOM nodes affected by this finding."
+                },
+                "nodes": {
+                  "type": "array",
+                  "description": "Affected elements, capped to a reasonable display count by the agent (not necessarily all node_count entries).",
+                  "items": {
+                    "type": "object",
+                    "required": ["selector"],
+                    "additionalProperties": false,
+                    "properties": {
+                      "selector": {
+                        "type": "string",
+                        "description": "CSS selector identifying the affected element."
+                      },
+                      "html_snippet": {
+                        "type": "string",
+                        "description": "Truncated outer HTML of the affected element, for context."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "description": "Aggregate counts across all pages, for dashboard display without re-walking the full findings tree.",
+      "required": ["pages_scanned", "total_findings", "by_impact"],
+      "additionalProperties": false,
+      "properties": {
+        "pages_scanned": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "total_findings": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "by_impact": {
+          "type": "object",
+          "required": ["critical", "serious", "moderate", "minor"],
+          "additionalProperties": false,
+          "properties": {
+            "critical": { "type": "integer", "minimum": 0 },
+            "serious": { "type": "integer", "minimum": 0 },
+            "moderate": { "type": "integer", "minimum": 0 },
+            "minor": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{"run_id": "run20260620a1b2c3", "event_type": "started", "timestamp": "2026-06-20T14:32:01Z"}
+{"run_id": "run20260620a1b2c3", "event_type": "step", "timestamp": "2026-06-20T14:32:02Z", "message": "Launching browser", "data": {"step_name": "browser-launch", "progress": 0.1}}
+{"run_id": "run20260620a1b2c3", "event_type": "step", "timestamp": "2026-06-20T14:32:04Z", "message": "Navigating to target URL", "data": {"step_name": "navigation", "progress": 0.2}}
+{"run_id": "run20260620a1b2c3", "event_type": "step", "timestamp": "2026-06-20T14:32:06Z", "message": "Running axe-core scan", "data": {"step_name": "axe-scan", "progress": 0.5}}
+{"run_id": "run20260620a1b2c3", "event_type": "artifact-written", "timestamp": "2026-06-20T14:32:07Z", "data": {"relative_path": "screenshots/page-001.png", "artifact_type": "screenshot"}}
+{"run_id": "run20260620a1b2c3", "event_type": "step", "timestamp": "2026-06-20T14:32:08Z", "message": "Writing findings report", "data": {"step_name": "report-write", "progress": 0.9}}
+{"run_id": "run20260620a1b2c3", "event_type": "artifact-written", "timestamp": "2026-06-20T14:32:08Z", "data": {"relative_path": "report.json", "artifact_type": "report"}}
+{"run_id": "run20260620a1b2c3", "event_type": "completed", "timestamp": "2026-06-20T14:32:09Z", "data": {"output_path": "report.json"}}

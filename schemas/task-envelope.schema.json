@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://local-agent-platform/schemas/task-envelope.schema.json",
+  "title": "Task Envelope",
+  "description": "What the launcher hands to an agent container at the start of a run, mounted read-only at /workspace/input/run-request.json.",
+  "type": "object",
+  "required": ["run_id", "agent_id", "target", "created_at"],
+  "additionalProperties": false,
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for this run. Used for workspace paths, run history, and artifact storage.",
+      "pattern": "^[a-z0-9]{8,}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "description": "Which agent this run is for. Must match metadata.id of an agent.yaml in the registry.",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+    },
+    "target": {
+      "type": "object",
+      "description": "The subject of the run. For browser-based agents this drives both navigation and the per-run proxy ACL.",
+      "required": ["entry_url", "scope"],
+      "additionalProperties": false,
+      "properties": {
+        "entry_url": {
+          "type": "string",
+          "description": "The single URL the agent starts from. Must be a well-formed http(s) URL.",
+          "format": "uri",
+          "pattern": "^https?://[^\\s]+$"
+        },
+        "scope": {
+          "type": "string",
+          "description": "'single-page' restricts the run (and the proxy ACL) to entry_url's exact host only. 'site' allows the launcher to derive a wildcarded ACL entry for the registrable domain (e.g. *.example.com) so the agent can crawl across subdomains of the same site during a multi-page audit.",
+          "enum": ["single-page", "site"],
+          "default": "single-page"
+        },
+        "max_pages": {
+          "type": "integer",
+          "description": "Upper bound on pages the agent may visit in one run when scope is 'site'. Ignored for 'single-page'. Required when scope is 'site' so a crawl can't run unbounded.",
+          "minimum": 1,
+          "default": 1
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "scope": { "const": "site" } }
+          },
+          "then": {
+            "required": ["max_pages"]
+          }
+        }
+      ]
+    },
+    "created_at": {
+      "type": "string",
+      "description": "ISO 8601 timestamp when the run was requested.",
+      "format": "date-time"
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Agent-specific extras. Open-ended; each agent defines and validates its own expected keys.",
+      "additionalProperties": true
+    }
+  }
+}

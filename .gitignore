@@ -18,6 +18,7 @@ build/
 # IDEs
 .vscode/
 .idea/
+.code-workspace
 
 # Operating systems
 .DS_Store
@@ -27,6 +28,12 @@ Thumbs.db
 *.log
 data/
 tmp/
+
+# Reports
+.reports/
+
+# Databases
+*.db
 
 # Docker overrides
 docker-compose.override.yml

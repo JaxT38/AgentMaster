@@ -1,0 +1,12 @@
+{
+  "run_id": "run78n9vdha9119",
+  "agent_id": "wcag22-auditor",
+  "target": {
+    "entry_url": "https://www.example.com/",
+    "scope": "single-page"
+  },
+  "created_at": "2026-06-27T17:02:54Z",
+  "parameters": {
+    "wcag_level": "AA"
+  }
+}

@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agent Platform — Run Dashboard</title>
+<style>
+  :root {
+    --bg: #14171c;
+    --panel: #1b1f26;
+    --panel-border: #2a2f38;
+    --text: #e4e7eb;
+    --text-dim: #8b919c;
+    --accent: #5fb3a3;
+    --accent-dim: #3a6e64;
+    --danger: #d97070;
+    --warn: #d9a766;
+    --mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+    --sans: -apple-system, "Segoe UI", system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    margin: 0;
+    padding: 2rem;
+    line-height: 1.5;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 0 0 2rem;
+    font-family: var(--mono);
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .panel h2 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    margin: 0 0 1rem;
+    font-weight: 600;
+  }
+
+  form {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+
+  label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+  }
+
+  input, select {
+    background: var(--bg);
+    border: 1px solid var(--panel-border);
+    color: var(--text);
+    border-radius: 5px;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+    font-family: var(--mono);
+  }
+
+  input[type="url"] { flex: 1; min-width: 260px; }
+
+  button {
+    background: var(--accent-dim);
+    color: var(--text);
+    border: 1px solid var(--accent);
+    border-radius: 5px;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: var(--sans);
+    font-weight: 500;
+  }
+
+  button:hover { background: var(--accent); color: #0d1310; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  button.secondary {
+    background: transparent;
+    border-color: var(--panel-border);
+    color: var(--text-dim);
+  }
+  button.secondary:hover { background: var(--panel-border); color: var(--text); }
+
+  button.danger { border-color: var(--danger); }
+  button.danger:hover { background: var(--danger); color: #1a0d0d; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th { text-align: left; color: var(--text-dim); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--panel-border); }
+  td { padding: 0.6rem; border-bottom: 1px solid var(--panel-border); font-family: var(--mono); vertical-align: middle; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  tr.selected td { background: rgba(95,179,163,0.08); }
+  tr { cursor: pointer; }
+
+  .status-badge {
+    display: inline-block;
+    padding: 0.15rem 0.55rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .status-completed { background: rgba(95,179,163,0.15); color: var(--accent); }
+  .status-failed { background: rgba(217,112,112,0.15); color: var(--danger); }
+  .status-running, .status-queued { background: rgba(217,167,102,0.15); color: var(--warn); }
+
+  .empty {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    font-family: var(--mono);
+    padding: 1.5rem 0;
+    text-align: center;
+  }
+
+  .detail-url {
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    font-family: var(--mono);
+    margin-bottom: 1rem;
+    word-break: break-all;
+  }
+
+  .finding {
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.6rem;
+  }
+  .finding-impact {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    margin-right: 0.5rem;
+  }
+  .impact-critical { background: rgba(217,112,112,0.2); color: var(--danger); }
+  .impact-serious { background: rgba(217,167,102,0.2); color: var(--warn); }
+  .impact-moderate, .impact-minor { background: rgba(139,145,156,0.2); color: var(--text-dim); }
+
+  .finding-rule { font-family: var(--mono); font-weight: 600; font-size: 0.85rem; }
+  .finding-desc { color: var(--text-dim); font-size: 0.8rem; margin: 0.3rem 0; }
+  .finding-wcag { font-family: var(--mono); font-size: 0.72rem; color: var(--text-dim); }
+
+  img.screenshot {
+    max-width: 100%;
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    margin-top: 0.75rem;
+  }
+
+  .meta-row { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.78rem; color: var(--text-dim); font-family: var(--mono); margin-bottom: 1rem; }
+  .meta-row span b { color: var(--text); }
+
+  .actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+
+  .schema-error { color: var(--danger); font-family: var(--mono); font-size: 0.78rem; padding: 0.3rem 0; }
+</style>
+</head>
+<body>
+
+<h1>Agent Platform</h1>
+<p class="subtitle">local-first run dashboard — v1 monolith</p>
+
+<div class="panel">
+  <h2>Start a run</h2>
+  <form id="run-form">
+    <div>
+      <label for="entry_url">Target URL</label>
+      <input type="url" id="entry_url" placeholder="https://example.com/" required>
+    </div>
+    <div>
+      <label for="agent_id">Agent</label>
+      <select id="agent_id">
+        <option value="wcag22-auditor">wcag22-auditor</option>
+      </select>
+    </div>
+    <div>
+      <label for="scope">Scope</label>
+      <select id="scope">
+        <option value="single-page">single-page</option>
+        <option value="site">site</option>
+      </select>
+    </div>
+    <button type="submit" id="submit-btn">Run audit</button>
+  </form>
+</div>
+
+<div class="panel">
+  <h2>Runs</h2>
+  <div id="runs-container"><div class="empty">No runs yet.</div></div>
+</div>
+
+<div class="panel" id="detail-panel" style="display:none;">
+  <h2>Run detail</h2>
+  <div id="detail-container"></div>
+</div>
+
+<script>
+const API_BASE = "http://localhost:8000";
+let selectedRunId = null;
+let pollHandle = null;
+
+const form = document.getElementById("run-form");
+const submitBtn = document.getElementById("submit-btn");
+const runsContainer = document.getElementById("runs-container");
+const detailPanel = document.getElementById("detail-panel");
+const detailContainer = document.getElementById("detail-container");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const entry_url = document.getElementById("entry_url").value.trim();
+  const agent_id = document.getElementById("agent_id").value;
+  const scope = document.getElementById("scope").value;
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Running…";
+
+  try {
+    const res = await fetch(`${API_BASE}/runs`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ agent_id, entry_url, scope }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || `HTTP ${res.status}`);
+    }
+    const run = await res.json();
+    selectedRunId = run.run_id;
+    await refreshRuns();
+    await showDetail(run.run_id);
+  } catch (err) {
+    alert(`Run failed to start: ${err.message}`);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = "Run audit";
+  }
+});
+
+function statusBadge(status) {
+  return `<span class="status-badge status-${status}">${status}</span>`;
+}
+
+function fmtNum(n, suffix) {
+  if (n === null || n === undefined) return "—";
+  return `${Number(n).toFixed(1)}${suffix}`;
+}
+
+async function refreshRuns() {
+  const res = await fetch(`${API_BASE}/runs`);
+  if (!res.ok) return;
+  const runs = await res.json();
+
+  if (runs.length === 0) {
+    runsContainer.innerHTML = `<div class="empty">No runs yet. Start one above.</div>`;
+    return;
+  }
+
+  const rows = runs.map(r => `
+    <tr data-run-id="${r.run_id}" class="${r.run_id === selectedRunId ? 'selected' : ''}">
+      <td>${r.run_id}</td>
+      <td>${r.target_entry_url}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>${r.schema_valid === null ? "—" : (r.schema_valid ? "valid" : "invalid")}</td>
+      <td>${fmtNum(r.peak_cpu_percent, "%")}</td>
+      <td>${fmtNum(r.peak_memory_mb, "MB")}</td>
+      <td>${r.approval_status || "—"}</td>
+    </tr>
+  `).join("");
+
+  runsContainer.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Run ID</th><th>Target</th><th>Status</th><th>Schema</th><th>CPU</th><th>Mem</th><th>Approval</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+
+  runsContainer.querySelectorAll("tr[data-run-id]").forEach(tr => {
+    tr.addEventListener("click", () => showDetail(tr.dataset.runId));
+  });
+}
+
+async function showDetail(runId) {
+  selectedRunId = runId;
+  detailPanel.style.display = "block";
+  detailContainer.innerHTML = `<div class="empty">Loading…</div>`;
+
+  const res = await fetch(`${API_BASE}/runs/${runId}`);
+  if (!res.ok) {
+    detailContainer.innerHTML = `<div class="empty">Run not found.</div>`;
+    return;
+  }
+  const run = await res.json();
+  await refreshRuns(); // re-render to apply the .selected highlight
+
+  let reportHtml = "";
+  if (run.report_path) {
+    try {
+      const reportRes = await fetch(`${API_BASE}/reports/${run.report_path}`);
+      if (reportRes.ok) {
+        const report = await reportRes.json();
+        reportHtml = renderReport(report, runId);
+      }
+    } catch (e) { /* report not reachable -- fine, just skip */ }
+  }
+
+  let schemaErrorsHtml = "";
+  if (run.schema_valid === 0 && run.schema_errors) {
+    const errors = JSON.parse(run.schema_errors);
+    schemaErrorsHtml = `<div>${errors.map(e => `<div class="schema-error">${e}</div>`).join("")}</div>`;
+  }
+
+  detailContainer.innerHTML = `
+    <div class="detail-url">${run.target_entry_url}</div>
+    <div class="meta-row">
+      <span>Status: <b>${run.status}</b></span>
+      <span>Schema: <b>${run.schema_valid === null ? "pending" : (run.schema_valid ? "valid" : "invalid")}</b></span>
+      <span>Peak CPU: <b>${fmtNum(run.peak_cpu_percent, "%")}</b></span>
+      <span>Peak Mem: <b>${fmtNum(run.peak_memory_mb, "MB")}</b></span>
+      <span>Approval: <b>${run.approval_status || "pending"}</b></span>
+    </div>
+    ${schemaErrorsHtml}
+    ${run.error_message ? `<div class="schema-error">${run.error_message}</div>` : ""}
+    ${reportHtml}
+    <div class="actions">
+      <button onclick="approveRun('${runId}')">Approve</button>
+      <button class="danger" onclick="rejectRun('${runId}')">Reject</button>
+      <button class="secondary" onclick="closeDetail()">Close</button>
+    </div>
+  `;
+}
+
+function renderReport(report, runId) {
+  const pages = report.pages.map(page => {
+    const findings = page.findings.length === 0
+      ? `<div class="empty">No WCAG-mappable findings on this page.</div>`
+      : page.findings.map(f => `
+          <div class="finding">
+            <span class="finding-impact impact-${f.impact}">${f.impact}</span>
+            <span class="finding-rule">${f.rule_id}</span>
+            <div class="finding-desc">${f.description}</div>
+            <div class="finding-wcag">WCAG ${f.wcag_criteria.join(", ")} · ${f.node_count} node(s)</div>
+          </div>
+        `).join("");
+
+    return `
+      <div style="margin-bottom:1rem;">
+        <div class="detail-url">${page.url}</div>
+        ${findings}
+        <img class="screenshot" src="${API_BASE}/reports/${runId}/${page.screenshot_path}" alt="Screenshot of ${page.url}">
+      </div>
+    `;
+  }).join("");
+
+  return `
+    <div class="meta-row">
+      <span>Pages scanned: <b>${report.summary.pages_scanned}</b></span>
+      <span>Total findings: <b>${report.summary.total_findings}</b></span>
+      <span>Critical: <b>${report.summary.by_impact.critical}</b></span>
+      <span>Serious: <b>${report.summary.by_impact.serious}</b></span>
+    </div>
+    ${pages}
+  `;
+}
+
+async function approveRun(runId) {
+  await fetch(`${API_BASE}/runs/${runId}/approve`, { method: "POST" });
+  await showDetail(runId);
+}
+
+async function rejectRun(runId) {
+  await fetch(`${API_BASE}/runs/${runId}/reject`, { method: "POST" });
+  await showDetail(runId);
+}
+
+function closeDetail() {
+  selectedRunId = null;
+  detailPanel.style.display = "none";
+  refreshRuns();
+}
+
+// Poll the run list every 2s so in-progress runs visibly update without
+// a manual refresh. Detail view is only re-fetched on explicit click/action,
+// not on every poll tick, to avoid fighting the user's scroll position.
+refreshRuns();
+pollHandle = setInterval(refreshRuns, 2000);
+</script>
+
+</body>
+</html>
